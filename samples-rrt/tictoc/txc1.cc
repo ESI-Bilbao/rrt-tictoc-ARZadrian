@@ -39,6 +39,7 @@ void Txc1::initialize()
     if (strcmp("tic", getName()) == 0) {
         // create and send first message on gate "out". "tictocMsg" is an
         // arbitrary string which will be the name of the message object.
+        
         cMessage *msg = new cMessage("tictocMsg");
         send(msg, "out");
     }

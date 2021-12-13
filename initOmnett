@@ -1,0 +1,1 @@
+docker run --rm -it -v "$(pwd):/root/models" -u "$(id -u):$(id -u):$(id -g)" -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY jtpfevaa/rrt-2021:2

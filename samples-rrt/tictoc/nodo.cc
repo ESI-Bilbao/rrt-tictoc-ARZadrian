@@ -2,37 +2,45 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "paquete_m.h"
+#include <iostream>
 
 using namespace omnetpp;
+using namespace std;
 
 class nodo : public cSimpleModule
 {
     private:
-        cChannel *channel;
-        cQueue *queue;
-        double probability;  //Como es solo un enlace de salida siempre sera 1
+        cChannel *channel[2];
+        cQueue *queue[2];
+        double prob;
+        bool finalNode;
     protected:
         virtual void initialize() override;
         virtual void handleMessage(cMessage *msg) override;
         virtual void sendNew(paquete_struct *pkt);
-        virtual void sendNext();
-        virtual void sendPacket(paquete_struct *pkt);
+        virtual void sendNext(int index);
+        virtual void sendPacket(paquete_struct *pkt, int index);
+        virtual int checkWhichOutputIndex();
 };
 
 Define_Module(nodo);
 
 void nodo::initialize() {
+    prob = (double) par("probabilidad");
+    finalNode = (bool) par("final");
     // Get cChannel pointers from gates
-    channel = gate("outPort") -> getTransmissionChannel();
+
+    if(finalNode == false){
+        channel[0] = gate("outPort",0) -> getTransmissionChannel();
+        queue[0] = new cQueue("queueZero");
+
+        queue[1] = new cQueue("queueOne");
+        channel[1] = gate("outPort",1) -> getTransmissionChannel();
+    }
 
     // Create one queue for each channel
-    queue = new cQueue("queueZero");
-
     // Initialize random number generator
     srand(time(NULL));
-
-    // Get probability parameter
-    probability = 1;
 }
 
 //Gestiona la entrada de paquetes en el nodo
@@ -40,7 +48,9 @@ void nodo::initialize() {
 void nodo::handleMessage(cMessage *msg)
 {
     paquete_struct *pkt = check_and_cast<paquete_struct *> (msg);
-    cGate *arrivalGate = pkt -> getArrivalGate();
+    int queueIndex = pkt -> getArrivalGate()->getIndex();
+    EV << "Numero de la cola "+ std::to_string(queueIndex) +"\n";
+
     EV << "Paquete recibido\n";
 
     if (pkt -> getFromSource()) { //Paquete recibido de la fuente
@@ -54,60 +64,79 @@ void nodo::handleMessage(cMessage *msg)
             EV << "Paquete recibido con error. Se va a enviar un NAK\n";
             paquete_struct *nak = new paquete_struct("NAK");
             nak -> setKind(3);
-            send(nak, "outPort");
+            send(nak, "outPort",queueIndex);
         }
         else {
-            EV << "Packet recibido sin error. Se va a enviar un ACK\n";
+            EV << "Paquete recibido sin error. Se va a enviar un ACK\n";
             paquete_struct *ack = new paquete_struct("ACK");
             ack -> setKind(2);
-            send(ack, "outPort");
+            send(ack, "outPort",queueIndex);
+            if(finalNode == false) {
+                sendNew(pkt);
+            }
         }
     }
     else if (pkt -> getKind() == 2) { // 2: ACK
         EV << "ACK recibido\n";
-        if (queue -> isEmpty())
+        if (queue[queueIndex] -> isEmpty())
             EV << "La cola esta vacia, no hay paquetes para transmitir. Esperando nuevos paquetes...";
         else {
-            queue -> pop();
-            sendNext();
+            queue[queueIndex] -> pop();
+            sendNext(queueIndex);
         }
     }
     else { // 3: NAK
         EV << "NAK recibido\n";
-        sendNext();
+        sendNext(queueIndex);
     }
 }
 
 //
 void nodo::sendNew(paquete_struct *pkt) {
-    if (queue -> isEmpty()) {
+    int index = checkWhichOutputIndex();
+    if (queue[index] -> isEmpty()) {
         EV << "La cola esta vacia, envia el paquete directamente\n";
         // Insert in queue (it may have to be sent again)
-        queue-> insert(pkt);
-        sendPacket(pkt);
+        queue[index]-> insert(pkt);
+        sendPacket(pkt,index);
     } else {
         EV << "La cola no esta vacia, se añade al final y se espera a que se envie cuando toque\n";
-        queue -> insert(pkt);
+        queue[index] -> insert(pkt);
     }
 }
 
 //Envia el paquete que esta primero en la cola
-void nodo::sendNext() {
-    if (queue -> isEmpty())
+void nodo::sendNext(int index) {
+    if (queue[index] -> isEmpty())
         EV << "La cola esta vacia, no se pueden enviar mas paquetes\n";
     else {
-        paquete_struct *pkt = check_and_cast<paquete_struct *> (queue -> front());
-        sendPacket(pkt);
+        paquete_struct *pkt = check_and_cast<paquete_struct *> (queue[index] -> front());
+        sendPacket(pkt, index);
     }
 }
 
 //Si el canal esta vacio, envia el paquete (una copia) por la salida
-void nodo::sendPacket(paquete_struct *pkt) {
-    if (channel -> isBusy()) {
-        EV << "WARNING: channel is busy, check that everything is working fine\n";
+void nodo::sendPacket(paquete_struct *pkt, int index) {
+    if (channel[index] -> isBusy()) {
+        EV << "El canal esta ocupado en estos momentos";
     } else {
+        EV << "Numero del canal "+ std::to_string(index) +"\n";
+
         // OMNeT++ can't send a packet while it is queued, must send a copy
         paquete_struct *newPkt = check_and_cast<paquete_struct *> (pkt -> dup());
-        send(newPkt, "outPort");
+        send(newPkt, "outPort",index);
     }
+}
+
+int nodo::checkWhichOutputIndex(){
+    int index;
+    double rnd = ((float) rand() / (RAND_MAX));
+
+    if (rnd < prob){
+        index = 0;
+    }
+    else {
+        index = 1;
+    }
+    return index;
 }

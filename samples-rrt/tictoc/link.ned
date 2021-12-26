@@ -20,7 +20,7 @@ simple fuente
 
 network linkSW
 {
-    @display("bgb=468.71997,182.28");
+    @display("bgb=468.71997,287.37");
     types:
         channel Channel extends ned.DatarateChannel
         {
@@ -30,7 +30,7 @@ network linkSW
         }
     submodules:
         nodo1: nodo {
-            @display("p=144.15,71.61");
+            @display("p=138.56999,137.64");
             probabilidad = 1/4;
             final = false;
             gates:
@@ -38,23 +38,23 @@ network linkSW
                 outPort[2];
         }
         nodo2: nodo {
-            @display("p=234.35999,46.499996");
+            @display("p=228.77998,112.53");
             probabilidad = 1/3;
             final = false;
             gates:
-                inPort[4];
+                inPort[5];
                 outPort[4];
         }
         nodo5: nodo {
-            @display("p=234.35999,125.549995");
+            @display("p=228.77998,191.57999");
             probabilidad = 1/2;
             final = false;
             gates:
-                inPort[3];
+                inPort[4];
                 outPort[3];
         }
         nodo3: nodo {
-            @display("p=347.81998,46.499996");
+            @display("p=341.31,112.53");
             probabilidad = 1;
             final = true;
             gates:
@@ -62,7 +62,7 @@ network linkSW
                 outPort[1];
         }
         nodo4: nodo {
-            @display("p=347.81998,125.549995");
+            @display("p=341.31,191.57999");
             probabilidad = 1;
             final = true;
             gates:
@@ -70,7 +70,15 @@ network linkSW
                 outPort[2];
         }
         fuente1: fuente {
-            @display("p=60.449997,71.61");
+            @display("p=54.87,137.64");
+            meanPacketLength = 1000/3;
+        }
+        fuente2: fuente {
+            @display("p=206.45999,46.499996");
+            meanPacketLength = 1000/3;
+        }
+        fuente5: fuente {
+            @display("p=144.15,249.23999");
             meanPacketLength = 1000/3;
         }
     connections:
@@ -93,4 +101,6 @@ network linkSW
         nodo5.inPort[1] <-- Channel <-- nodo4.outPort[1];
 
         fuente1.outPort --> nodo1.inPort[2];
+        fuente2.outPort --> nodo2.inPort[4];
+        fuente5.outPort --> nodo5.inPort[3];
 }

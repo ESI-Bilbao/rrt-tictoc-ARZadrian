@@ -48,9 +48,9 @@ void nodo::initialize() {
 void nodo::handleMessage(cMessage *msg)
 {
     paquete_struct *pkt = check_and_cast<paquete_struct *> (msg);
-    int queueIndex = pkt -> getArrivalGate()->getIndex();
-    EV << "Numero de la cola "+ std::to_string(queueIndex) +"\n";
+    EV << "Tipo de paquete: "+to_string(pkt->getKind())+"\n";
 
+    int queueIndex = pkt -> getArrivalGate()->getIndex();
     EV << "Paquete recibido\n";
 
     if (pkt -> getFromSource()) { //Paquete recibido de la fuente
@@ -72,7 +72,7 @@ void nodo::handleMessage(cMessage *msg)
             ack -> setKind(2);
             send(ack, "outPort",queueIndex);
             if(finalNode == false) {
-                sendNew(pkt);
+               sendNew(pkt);
             }
         }
     }
@@ -117,12 +117,15 @@ void nodo::sendNext(int index) {
 
 //Si el canal esta vacio, envia el paquete (una copia) por la salida
 void nodo::sendPacket(paquete_struct *pkt, int index) {
+    double time = channel[index]-> getTransmissionFinishTime().dbl();
+    bool busy = channel[index] -> isBusy();
+    EV << "timpo restante: "+to_string(time)+"\n";
+    EV << "canal ocupado: "+to_string(busy)+"\n";
     if (channel[index] -> isBusy()) {
         EV << "El canal esta ocupado en estos momentos";
     } else {
-        EV << "Numero del canal "+ std::to_string(index) +"\n";
-
         // OMNeT++ can't send a packet while it is queued, must send a copy
+        EV << "No esta ocupado\n";
         paquete_struct *newPkt = check_and_cast<paquete_struct *> (pkt -> dup());
         send(newPkt, "outPort",index);
     }

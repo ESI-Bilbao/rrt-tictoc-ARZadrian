@@ -14,6 +14,8 @@ class nodo : public cSimpleModule
         cQueue *queue[2];
         double prob;
         bool finalNode;
+        long numSent;
+        long numReceived;
     protected:
         virtual void initialize() override;
         virtual void handleMessage(cMessage *msg) override;
@@ -21,11 +23,17 @@ class nodo : public cSimpleModule
         virtual void sendNext(int index);
         virtual void sendPacket(paquete_struct *pkt, int index);
         virtual int checkWhichOutputIndex();
+        virtual void refreshDisplay() const override;
 };
 
 Define_Module(nodo);
 
 void nodo::initialize() {
+
+    numSent = 0;
+    numReceived = 0;
+    WATCH(numSent);
+    WATCH(numReceived);
     prob = (double) par("probabilidad");
     finalNode = (bool) par("final");
     // Get cChannel pointers from gates
@@ -52,6 +60,7 @@ void nodo::handleMessage(cMessage *msg)
 
     int queueIndex = pkt -> getArrivalGate()->getIndex();
     EV << "Paquete recibido\n";
+    numReceived++;
 
     if (pkt -> getFromSource()) { //Paquete recibido de la fuente
         EV << "Se ha recibido un paquete de la fuente\n";
@@ -128,6 +137,7 @@ void nodo::sendPacket(paquete_struct *pkt, int index) {
         EV << "No esta ocupado\n";
         paquete_struct *newPkt = check_and_cast<paquete_struct *> (pkt -> dup());
         send(newPkt, "outPort",index);
+        numSent++;
     }
 }
 
@@ -142,4 +152,10 @@ int nodo::checkWhichOutputIndex(){
         index = 1;
     }
     return index;
+}
+
+void nodo::refreshDisplay() const{
+    char buf[40];
+    sprintf(buf, "rcvd: %ld sent: %ld",numReceived, numSent);
+    getDisplayString().setTagArg("t", 0, buf);
 }

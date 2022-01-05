@@ -1,0 +1,96 @@
+version 2
+run General-0-20220105-12:31:41-1562
+attr configname General
+attr datetime 20220105-12:31:41
+attr experiment General
+attr inifile linkSW.ini
+attr iterationvars ""
+attr iterationvarsf ""
+attr measurement ""
+attr network linkSW
+attr processid 1562
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+
+scalar linkSW.nodo1 #sent 18
+scalar linkSW.nodo1 #received 32
+statistic linkSW.nodo1 "hop count"
+field count 32
+field mean 0
+field stddev 0
+field min 0
+field max 0
+field sum 0
+field sqrsum 0
+attr type int
+bin	-inf	0
+bin	0	32
+bin	1	0
+scalar linkSW.nodo2 #sent 38
+scalar linkSW.nodo2 #received 72
+statistic linkSW.nodo2 "hop count"
+field count 72
+field mean 0.40277777777778
+field stddev 0.68504594730701
+field min 0
+field max 2
+field sum 29
+field sqrsum 45
+attr type int
+bin	-inf	0
+bin	0	51
+bin	1	13
+bin	2	8
+scalar linkSW.nodo5 #sent 27
+scalar linkSW.nodo5 #received 54
+statistic linkSW.nodo5 "hop count"
+field count 54
+field mean 0.24074074074074
+field stddev 0.43154768359306
+field min 0
+field max 1
+field sum 13
+field sqrsum 13
+attr type int
+bin	-inf	0
+bin	0	41
+bin	1	13
+bin	2	0
+scalar linkSW.nodo3 #sent 0
+scalar linkSW.nodo3 #received 19
+statistic linkSW.nodo3 "hop count"
+field count 19
+field mean 1.8421052631579
+field stddev 0.89834155189418
+field min 1
+field max 3
+field sum 35
+field sqrsum 79
+attr type int
+bin	-inf	0
+bin	0	0
+bin	1	9
+bin	2	4
+bin	3	6
+bin	4	0
+bin	5	0
+scalar linkSW.nodo4 #sent 0
+scalar linkSW.nodo4 #received 26
+statistic linkSW.nodo4 "hop count"
+field count 26
+field mean 1.5384615384615
+field stddev 0.70601808649746
+field min 1
+field max 3
+field sum 40
+field sqrsum 74
+attr type int
+bin	-inf	0
+bin	0	0
+bin	1	15
+bin	2	8
+bin	3	3
+

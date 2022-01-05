@@ -184,6 +184,7 @@ paquete_struct::paquete_struct(const char *name, short kind) : ::omnetpp::cPacke
     this->fromSource = false;
     this->sequenceNumber = 0;
     this->origin = 0;
+    this->hopcount = 0;
 }
 
 paquete_struct::paquete_struct(const paquete_struct& other) : ::omnetpp::cPacket(other)
@@ -208,6 +209,7 @@ void paquete_struct::copy(const paquete_struct& other)
     this->fromSource = other.fromSource;
     this->sequenceNumber = other.sequenceNumber;
     this->origin = other.origin;
+    this->hopcount = other.hopcount;
 }
 
 void paquete_struct::parsimPack(omnetpp::cCommBuffer *b) const
@@ -216,6 +218,7 @@ void paquete_struct::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->fromSource);
     doParsimPacking(b,this->sequenceNumber);
     doParsimPacking(b,this->origin);
+    doParsimPacking(b,this->hopcount);
 }
 
 void paquete_struct::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -224,6 +227,7 @@ void paquete_struct::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->fromSource);
     doParsimUnpacking(b,this->sequenceNumber);
     doParsimUnpacking(b,this->origin);
+    doParsimUnpacking(b,this->hopcount);
 }
 
 int paquete_struct::getFromSource() const
@@ -254,6 +258,16 @@ int paquete_struct::getOrigin() const
 void paquete_struct::setOrigin(int origin)
 {
     this->origin = origin;
+}
+
+int paquete_struct::getHopcount() const
+{
+    return this->hopcount;
+}
+
+void paquete_struct::setHopcount(int hopcount)
+{
+    this->hopcount = hopcount;
 }
 
 class paquete_structDescriptor : public omnetpp::cClassDescriptor
@@ -321,7 +335,7 @@ const char *paquete_structDescriptor::getProperty(const char *propertyname) cons
 int paquete_structDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 3+basedesc->getFieldCount() : 3;
+    return basedesc ? 4+basedesc->getFieldCount() : 4;
 }
 
 unsigned int paquete_structDescriptor::getFieldTypeFlags(int field) const
@@ -336,8 +350,9 @@ unsigned int paquete_structDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<3) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<4) ? fieldTypeFlags[field] : 0;
 }
 
 const char *paquete_structDescriptor::getFieldName(int field) const
@@ -352,8 +367,9 @@ const char *paquete_structDescriptor::getFieldName(int field) const
         "fromSource",
         "sequenceNumber",
         "origin",
+        "hopcount",
     };
-    return (field>=0 && field<3) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<4) ? fieldNames[field] : nullptr;
 }
 
 int paquete_structDescriptor::findField(const char *fieldName) const
@@ -363,6 +379,7 @@ int paquete_structDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='f' && strcmp(fieldName, "fromSource")==0) return base+0;
     if (fieldName[0]=='s' && strcmp(fieldName, "sequenceNumber")==0) return base+1;
     if (fieldName[0]=='o' && strcmp(fieldName, "origin")==0) return base+2;
+    if (fieldName[0]=='h' && strcmp(fieldName, "hopcount")==0) return base+3;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -378,8 +395,9 @@ const char *paquete_structDescriptor::getFieldTypeString(int field) const
         "int",
         "int",
         "int",
+        "int",
     };
-    return (field>=0 && field<3) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<4) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **paquete_structDescriptor::getFieldPropertyNames(int field) const
@@ -449,6 +467,7 @@ std::string paquete_structDescriptor::getFieldValueAsString(void *object, int fi
         case 0: return long2string(pp->getFromSource());
         case 1: return long2string(pp->getSequenceNumber());
         case 2: return long2string(pp->getOrigin());
+        case 3: return long2string(pp->getHopcount());
         default: return "";
     }
 }
@@ -466,6 +485,7 @@ bool paquete_structDescriptor::setFieldValueAsString(void *object, int field, in
         case 0: pp->setFromSource(string2long(value)); return true;
         case 1: pp->setSequenceNumber(string2long(value)); return true;
         case 2: pp->setOrigin(string2long(value)); return true;
+        case 3: pp->setHopcount(string2long(value)); return true;
         default: return false;
     }
 }

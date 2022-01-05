@@ -26,6 +26,7 @@
  *     int fromSource = false;
  *     int sequenceNumber;
  *     int origin;
+ *     int hopcount = 0;
  * }
  * </pre>
  */
@@ -35,6 +36,7 @@ class paquete_struct : public ::omnetpp::cPacket
     int fromSource;
     int sequenceNumber;
     int origin;
+    int hopcount;
 
   private:
     void copy(const paquete_struct& other);
@@ -59,6 +61,8 @@ class paquete_struct : public ::omnetpp::cPacket
     virtual void setSequenceNumber(int sequenceNumber);
     virtual int getOrigin() const;
     virtual void setOrigin(int origin);
+    virtual int getHopcount() const;
+    virtual void setHopcount(int hopcount);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const paquete_struct& obj) {obj.parsimPack(b);}

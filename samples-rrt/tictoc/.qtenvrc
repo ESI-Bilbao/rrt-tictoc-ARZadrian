@@ -2,6 +2,30 @@
 last-configname=Tictoc1
 last-runnumber=0
 
+[Inspector-0]
+classname=nodo
+fullscreen=false
+geom=@Rect(0 60 400 300)
+id=@Variant(\0\0\0\x81\0\0\0\0\0\0\0\x5)
+object=linkSW.nodo3
+type=1
+
+[Inspector-1]
+classname=nodo
+fullscreen=false
+geom=@Rect(0 60 400 300)
+id=@Variant(\0\0\0\x81\0\0\0\0\0\0\0\x2)
+object=linkSW.nodo1
+type=1
+
+[Inspector-2]
+classname=omnetpp::cLongHistogram
+fullscreen=false
+geom=@Rect(0 60 400 300)
+id=@Variant(\0\0\0\x81\xff\xff\xff\xff\xff\xff\xff\xff)
+object=linkSW.nodo1.hopCountStats
+type=2
+
 [RunModeProfiles]
 fast-max-animation-speed=nan
 fast-max-playback-speed=1e+6
@@ -12,4 +36,4 @@ run-max-animation-speed=nan
 run-max-playback-speed=100
 run-min-animation-speed=nan
 run-min-playback-speed=0.01
-run-playback-speed=3.2359365692962827
+run-playback-speed=61.65950018614822

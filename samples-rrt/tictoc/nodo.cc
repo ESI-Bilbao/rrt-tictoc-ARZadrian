@@ -14,8 +14,12 @@ class nodo : public cSimpleModule
         cQueue *queue[2];
         double prob;
         bool finalNode;
+
+        //Recoleccion de datos
         long numSent;
         long numReceived;
+        cLongHistogram hopCountStats;
+        cOutVector hopCountVector;
     protected:
         virtual void initialize() override;
         virtual void handleMessage(cMessage *msg) override;
@@ -24,6 +28,7 @@ class nodo : public cSimpleModule
         virtual void sendPacket(paquete_struct *pkt, int index);
         virtual int checkWhichOutputIndex();
         virtual void refreshDisplay() const override;
+        virtual void finish() override;
 };
 
 Define_Module(nodo);
@@ -34,6 +39,11 @@ void nodo::initialize() {
     numReceived = 0;
     WATCH(numSent);
     WATCH(numReceived);
+
+    hopCountStats.setName("hopCountStats");
+    hopCountStats.setRangeAutoUpper(0, 10, 1.5);
+    hopCountVector.setName("HopCount");
+
     prob = (double) par("probabilidad");
     finalNode = (bool) par("final");
     // Get cChannel pointers from gates
@@ -57,10 +67,16 @@ void nodo::handleMessage(cMessage *msg)
 {
     paquete_struct *pkt = check_and_cast<paquete_struct *> (msg);
     EV << "Tipo de paquete: "+to_string(pkt->getKind())+"\n";
-
+    int hopcount = pkt->getHopcount();
     int queueIndex = pkt -> getArrivalGate()->getIndex();
     EV << "Paquete recibido\n";
+
     numReceived++;
+    hopCountVector.record(hopcount);
+    hopCountStats.collect(hopcount);
+
+    pkt->setHopcount(hopcount+1);
+
 
     if (pkt -> getFromSource()) { //Paquete recibido de la fuente
         EV << "Se ha recibido un paquete de la fuente\n";
@@ -158,4 +174,18 @@ void nodo::refreshDisplay() const{
     char buf[40];
     sprintf(buf, "rcvd: %ld sent: %ld",numReceived, numSent);
     getDisplayString().setTagArg("t", 0, buf);
+}
+
+void nodo::finish() {
+    EV << "Sent:     " << numSent << endl;
+    EV << "Received: " << numReceived << endl;
+    EV << "Hop count, min:    " << hopCountStats.getMin() << endl;
+    EV << "Hop count, max:    " << hopCountStats.getMax() << endl;
+    EV << "Hop count, mean:   " << hopCountStats.getMean() << endl;
+    EV << "Hop count, stddev: " << hopCountStats.getStddev() << endl;
+
+    recordScalar("#sent", numSent);
+    recordScalar("#received", numReceived);
+
+    hopCountStats.recordAs("hop count");
 }

@@ -19,7 +19,9 @@ class nodo : public cSimpleModule
         long numSent;
         long numReceived;
         cLongHistogram hopCountStats;
+        cHistogram delayCountStats;
         cOutVector hopCountVector;
+        cOutVector delayCountVector;
     protected:
         virtual void initialize() override;
         virtual void handleMessage(cMessage *msg) override;
@@ -43,7 +45,8 @@ void nodo::initialize() {
     hopCountStats.setName("hopCountStats");
     hopCountStats.setRangeAutoUpper(0, 10, 1.5);
     hopCountVector.setName("HopCount");
-
+    delayCountVector.setName("delayCountVector");
+    delayCountStats.setName("delayCountStats");
     prob = (double) par("probabilidad");
     finalNode = (bool) par("final");
     // Get cChannel pointers from gates
@@ -92,10 +95,13 @@ void nodo::handleMessage(cMessage *msg)
             send(nak, "outPort",queueIndex);
         }
         else {
+            double delay=(simTime() - pkt -> getCreationTime()).dbl();
             EV << "Paquete recibido sin error. Se va a enviar un ACK\n";
             paquete_struct *ack = new paquete_struct("ACK");
             ack -> setKind(2);
             send(ack, "outPort",queueIndex);
+            delayCountVector.record(delay);
+            delayCountStats.collect(delay);
             if(finalNode == false) {
                sendNew(pkt);
             }

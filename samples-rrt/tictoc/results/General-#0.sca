@@ -1,24 +1,24 @@
 version 2
-run General-0-20220105-12:31:41-1562
+run General-0-20220108-16:46:14-400
 attr configname General
-attr datetime 20220105-12:31:41
+attr datetime 20220108-16:46:14
 attr experiment General
 attr inifile linkSW.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network linkSW
-attr processid 1562
+attr processid 400
 attr repetition 0
 attr replication #0
 attr resultdir results
 attr runnumber 0
 attr seedset 0
 
-scalar linkSW.nodo1 #sent 18
-scalar linkSW.nodo1 #received 32
+scalar linkSW.nodo1 #sent 54
+scalar linkSW.nodo1 #received 100
 statistic linkSW.nodo1 "hop count"
-field count 32
+field count 100
 field mean 0
 field stddev 0
 field min 0
@@ -27,70 +27,73 @@ field sum 0
 field sqrsum 0
 attr type int
 bin	-inf	0
-bin	0	32
+bin	0	100
 bin	1	0
-scalar linkSW.nodo2 #sent 38
-scalar linkSW.nodo2 #received 72
+scalar linkSW.nodo2 #sent 106
+scalar linkSW.nodo2 #received 202
 statistic linkSW.nodo2 "hop count"
-field count 72
-field mean 0.40277777777778
-field stddev 0.68504594730701
+field count 202
+field mean 0.35148514851485
+field stddev 0.65428003215355
 field min 0
 field max 2
-field sum 29
-field sqrsum 45
+field sum 71
+field sqrsum 111
 attr type int
 bin	-inf	0
-bin	0	51
-bin	1	13
-bin	2	8
-scalar linkSW.nodo5 #sent 27
-scalar linkSW.nodo5 #received 54
+bin	0	151
+bin	1	31
+bin	2	20
+bin	3	0
+scalar linkSW.nodo5 #sent 95
+scalar linkSW.nodo5 #received 186
 statistic linkSW.nodo5 "hop count"
-field count 54
-field mean 0.24074074074074
-field stddev 0.43154768359306
+field count 186
+field mean 0.24731182795699
+field stddev 0.43261402754917
 field min 0
 field max 1
-field sum 13
-field sqrsum 13
+field sum 46
+field sqrsum 46
 attr type int
 bin	-inf	0
-bin	0	41
-bin	1	13
+bin	0	140
+bin	1	46
 bin	2	0
 scalar linkSW.nodo3 #sent 0
-scalar linkSW.nodo3 #received 19
+scalar linkSW.nodo3 #received 34
 statistic linkSW.nodo3 "hop count"
-field count 19
-field mean 1.8421052631579
-field stddev 0.89834155189418
+field count 34
+field mean 1.6764705882353
+field stddev 0.80605993593582
 field min 1
 field max 3
-field sum 35
-field sqrsum 79
+field sum 57
+field sqrsum 117
 attr type int
 bin	-inf	0
 bin	0	0
-bin	1	9
-bin	2	4
-bin	3	6
+bin	1	18
+bin	2	9
+bin	3	7
 bin	4	0
 bin	5	0
 scalar linkSW.nodo4 #sent 0
-scalar linkSW.nodo4 #received 26
+scalar linkSW.nodo4 #received 120
 statistic linkSW.nodo4 "hop count"
-field count 26
-field mean 1.5384615384615
-field stddev 0.70601808649746
+field count 120
+field mean 1.6083333333333
+field stddev 0.73674087360885
 field min 1
 field max 3
-field sum 40
-field sqrsum 74
+field sum 193
+field sqrsum 375
 attr type int
 bin	-inf	0
 bin	0	0
-bin	1	15
-bin	2	8
-bin	3	3
+bin	1	65
+bin	2	37
+bin	3	18
+bin	4	0
+bin	5	0
 

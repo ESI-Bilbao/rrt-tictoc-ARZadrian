@@ -71,12 +71,11 @@ void nodo::handleMessage(cMessage *msg)
     paquete_struct *pkt = check_and_cast<paquete_struct *> (msg);
     EV << "Tipo de paquete: "+to_string(pkt->getKind())+"\n";
     int hopcount = pkt->getHopcount();
+    double delay=(simTime() - pkt -> getCreationTime()).dbl();
     int queueIndex = pkt -> getArrivalGate()->getIndex();
     EV << "Paquete recibido\n";
 
     numReceived++;
-    hopCountVector.record(hopcount);
-    hopCountStats.collect(hopcount);
 
     pkt->setHopcount(hopcount+1);
 
@@ -84,6 +83,8 @@ void nodo::handleMessage(cMessage *msg)
     if (pkt -> getFromSource()) { //Paquete recibido de la fuente
         EV << "Se ha recibido un paquete de la fuente\n";
         pkt -> setFromSource(false);
+        hopCountVector.record(hopcount);
+        hopCountStats.collect(hopcount);
         sendNew(pkt);
         return;
     }
@@ -95,13 +96,14 @@ void nodo::handleMessage(cMessage *msg)
             send(nak, "outPort",queueIndex);
         }
         else {
-            double delay=(simTime() - pkt -> getCreationTime()).dbl();
             EV << "Paquete recibido sin error. Se va a enviar un ACK\n";
             paquete_struct *ack = new paquete_struct("ACK");
             ack -> setKind(2);
             send(ack, "outPort",queueIndex);
             delayCountVector.record(delay);
             delayCountStats.collect(delay);
+            hopCountVector.record(hopcount);
+            hopCountStats.collect(hopcount);
             if(finalNode == false) {
                sendNew(pkt);
             }

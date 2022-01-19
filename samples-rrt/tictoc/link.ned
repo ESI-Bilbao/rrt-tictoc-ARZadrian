@@ -1,7 +1,7 @@
 simple nodo
 {
     parameters:
-        @display("i=block/departure");
+        @display("i=block/routing");
         double probabilidad;
         bool final;
     gates:
@@ -24,8 +24,8 @@ network linkSW
     types:
         channel Channel extends ned.DatarateChannel
         {
-            datarate = 1000bps;
-            delay = 100us;
+            datarate = 3000bps;
+            delay = 5ms;
             per = 0.25;
         }
     submodules:
@@ -71,15 +71,15 @@ network linkSW
         }
         fuente1: fuente {
             @display("p=54.87,137.64");
-            meanPacketLength = 1000/3;
+            meanPacketLength = 9600/3;
         }
         fuente2: fuente {
             @display("p=206.45999,46.499996");
-            meanPacketLength = 1000/3;
+            meanPacketLength = 9600/3;
         }
         fuente5: fuente {
             @display("p=144.15,249.23999");
-            meanPacketLength = 1000/3;
+            meanPacketLength = 9600/3;
         }
     connections:
         nodo1.outPort[0] --> Channel --> nodo2.inPort[2];
